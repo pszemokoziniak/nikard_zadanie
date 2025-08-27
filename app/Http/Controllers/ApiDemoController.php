@@ -15,6 +15,7 @@ class ApiDemoController extends Controller
         $limit = (int) $request->integer('limit', 5);
         try {
             $posts = $client->getPosts($limit);
+
             return new JsonResponse([
                 'ok' => true,
                 'count' => count($posts),
@@ -33,6 +34,7 @@ class ApiDemoController extends Controller
     {
         try {
             $capital = $client->getCapitalCity($code);
+
             return new JsonResponse([
                 'ok' => true,
                 'code' => strtoupper($code),

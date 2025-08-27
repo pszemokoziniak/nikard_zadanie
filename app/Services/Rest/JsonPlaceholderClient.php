@@ -13,21 +13,22 @@ class JsonPlaceholderClient
     {
         $this->http = $client ?? new Client([
             'base_uri' => 'https://jsonplaceholder.typicode.com',
-            'timeout'  => 5.0,
+            'timeout' => 5.0,
         ]);
     }
 
     /**
      * Pobiera przykładową listę postów.
      *
-     * @param int $limit maksymalna liczba rekordów do zwrócenia
-     * @return array
+     * @param  int  $limit  maksymalna liczba rekordów do zwrócenia
+     *
      * @throws GuzzleException
      */
     public function getPosts(int $limit = 5): array
     {
         $res = $this->http->get('/posts');
         $data = json_decode((string) $res->getBody(), true) ?: [];
+
         return array_slice($data, 0, max(0, $limit));
     }
 }

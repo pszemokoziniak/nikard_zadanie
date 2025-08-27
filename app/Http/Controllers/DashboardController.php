@@ -23,7 +23,7 @@ class DashboardController extends Controller
         }
 
         try {
-            if (!class_exists(\SoapClient::class)) {
+            if (! class_exists(\SoapClient::class)) {
                 throw new \RuntimeException('PHP extension ext-soap is not enabled.');
             }
             $soapCapital = app(CountryInfoClient::class)->getCapitalCity('PL');

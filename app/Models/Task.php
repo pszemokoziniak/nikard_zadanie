@@ -13,9 +13,11 @@ class Task extends Model
 {
     use HasFactory, SoftDeletes;
 
-    private const STATUS_PENDING     = 'pending';
+    private const STATUS_PENDING = 'pending';
+
     private const STATUS_IN_PROGRESS = 'in_progress';
-    private const STATUS_DONE        = 'done';
+
+    private const STATUS_DONE = 'done';
 
     public const STATUSES = [
         self::STATUS_PENDING,
@@ -26,15 +28,18 @@ class Task extends Model
     public static function statusLabels(): array
     {
         return [
-            self::STATUS_PENDING     => 'Oczekujące',
+            self::STATUS_PENDING => 'Oczekujące',
             self::STATUS_IN_PROGRESS => 'W toku',
-            self::STATUS_DONE        => 'Zrobione',
+            self::STATUS_DONE => 'Zrobione',
         ];
     }
 
-    public const MSG_CREATED  = 'Zadanie utworzone.';
-    public const MSG_UPDATED  = 'Zadanie zaktualizowane.';
-    public const MSG_DELETED  = 'Zadanie usunięte.';
+    public const MSG_CREATED = 'Zadanie utworzone.';
+
+    public const MSG_UPDATED = 'Zadanie zaktualizowane.';
+
+    public const MSG_DELETED = 'Zadanie usunięte.';
+
     public const MSG_RESTORED = 'Zadanie przywrócone.';
 
     public static function statusSelectOptions(): array
@@ -100,7 +105,7 @@ class Task extends Model
                 $q->where('title', 'like', '%'.$search.'%')
                     ->orWhere('description', 'like', '%'.$search.'%');
 
-                if (!empty($matchingStatusCodes)) {
+                if (! empty($matchingStatusCodes)) {
                     $q->orWhereIn('status', $matchingStatusCodes);
                 }
 

@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class JsonPlaceholderClientTest extends TestCase
 {
-    public function testGetPostsReturnsSlicedData(): void
+    public function test_get_posts_returns_sliced_data(): void
     {
         $payload = [
             ['id' => 1], ['id' => 2], ['id' => 3], ['id' => 4],
@@ -36,7 +36,7 @@ class JsonPlaceholderClientTest extends TestCase
     /**
      * @throws GuzzleException
      */
-    public function testGetPostsWithZeroLimitReturnsEmptyArray(): void
+    public function test_get_posts_with_zero_limit_returns_empty_array(): void
     {
         $payload = [
             ['id' => 1], ['id' => 2],
@@ -55,7 +55,7 @@ class JsonPlaceholderClientTest extends TestCase
     /**
      * @throws GuzzleException
      */
-    public function testGetPostsPropagatesRequestException(): void
+    public function test_get_posts_propagates_request_exception(): void
     {
         $mock = new MockHandler([
             function () {

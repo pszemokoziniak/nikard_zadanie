@@ -26,8 +26,6 @@ class CountryInfoClient
     /**
      * Zwraca stolicę kraju dla kodu ISO2 (np. "PL", "DE").
      *
-     * @param string $iso2
-     * @return string|null
      * @throws SoapFault
      */
     public function getCapitalCity(string $iso2): ?string

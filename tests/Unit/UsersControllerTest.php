@@ -25,7 +25,7 @@ class UsersControllerTest extends TestCase
         $this->app->instance('request', $request);
     }
 
-    public function testIndexReturnsInertiaResponseWithTransformedUsers(): void
+    public function test_index_returns_inertia_response_with_transformed_users(): void
     {
         $filters = ['search' => 'john', 'role' => 'user', 'trashed' => 'with'];
         $this->setCurrentRequest(Request::create('/users', 'GET', $filters));
@@ -40,25 +40,64 @@ class UsersControllerTest extends TestCase
             'deleted_at' => null,
         ];
 
-        $fakeQuery = new class($fakeUserRow) {
+        $fakeQuery = new class($fakeUserRow)
+        {
             private $userRow;
-            public function __construct($userRow) { $this->userRow = $userRow; }
-            public function orderByName() { return $this; }
-            public function filter($filters) { return $this; }
-            public function paginate($perPage) { return $this; }
-            public function withQueryString() { return $this; }
-            public function through($callback) { return [$callback($this->userRow)]; }
+
+            public function __construct($userRow)
+            {
+                $this->userRow = $userRow;
+            }
+
+            public function orderByName()
+            {
+                return $this;
+            }
+
+            public function filter($filters)
+            {
+                return $this;
+            }
+
+            public function paginate($perPage)
+            {
+                return $this;
+            }
+
+            public function withQueryString()
+            {
+                return $this;
+            }
+
+            public function through($callback)
+            {
+                return [$callback($this->userRow)];
+            }
         };
 
-        $fakeAccount = new class($fakeQuery) {
+        $fakeAccount = new class($fakeQuery)
+        {
             private $fakeQuery;
-            public function __construct($fakeQuery) { $this->fakeQuery = $fakeQuery; }
-            public function users() { return $this->fakeQuery; }
+
+            public function __construct($fakeQuery)
+            {
+                $this->fakeQuery = $fakeQuery;
+            }
+
+            public function users()
+            {
+                return $this->fakeQuery;
+            }
         };
 
-        $fakeAuthUser = new class($fakeAccount) {
+        $fakeAuthUser = new class($fakeAccount)
+        {
             public $account;
-            public function __construct($account) { $this->account = $account; }
+
+            public function __construct($account)
+            {
+                $this->account = $account;
+            }
         };
 
         Auth::shouldReceive('user')
@@ -80,15 +119,16 @@ class UsersControllerTest extends TestCase
                 $this->assertFalse($row['owner']);
                 $this->assertNull($row['photo']);
                 $this->assertNull($row['deleted_at']);
+
                 return true;
             })
             ->andReturn(Mockery::mock(InertiaResponse::class));
 
-        $controller = new UsersController();
+        $controller = new UsersController;
         $controller->index();
     }
 
-    public function testCreateReturnsInertiaCreateComponent(): void
+    public function test_create_returns_inertia_create_component(): void
     {
         Inertia::shouldReceive('render')
             ->once()
@@ -97,56 +137,62 @@ class UsersControllerTest extends TestCase
                 $props = $args[1] ?? [];
                 $this->assertSame('Users/Create', $component);
                 $this->assertIsArray($props);
+
                 return true;
             })
             ->andReturn(Mockery::mock(InertiaResponse::class));
 
-        $controller = new UsersController();
+        $controller = new UsersController;
         $controller->create();
     }
 
-    public function testStoreCreatesUserAndRedirectsWithSuccess(): void
+    public function test_store_creates_user_and_redirects_with_success(): void
     {
         $request = Mockery::mock(UsersRequest::class);
         $request->shouldReceive('validated')->once()->andReturn([
             'first_name' => 'Jane',
-            'last_name'  => 'Doe',
-            'email'      => 'jane@example.com',
-            'password'   => 'secret',
-            'owner'      => false,
+            'last_name' => 'Doe',
+            'email' => 'jane@example.com',
+            'password' => 'secret',
+            'owner' => false,
         ]);
         $request->shouldReceive('file')->with('photo')->andReturn(null);
 
         $usersRelation = Mockery::mock();
         $usersRelation->shouldReceive('create')->once()->with([
             'first_name' => 'Jane',
-            'last_name'  => 'Doe',
-            'email'      => 'jane@example.com',
-            'password'   => 'secret',
-            'owner'      => false,
+            'last_name' => 'Doe',
+            'email' => 'jane@example.com',
+            'password' => 'secret',
+            'owner' => false,
             'photo_path' => null,
         ]);
 
         $account = Mockery::mock();
         $account->shouldReceive('users')->andReturn($usersRelation);
 
-        $authUser = new class($account) {
+        $authUser = new class($account)
+        {
             public $account;
-            public function __construct($account) { $this->account = $account; }
+
+            public function __construct($account)
+            {
+                $this->account = $account;
+            }
         };
 
         Auth::shouldReceive('user')->once()->andReturn($authUser);
 
-        $controller = new UsersController();
+        $controller = new UsersController;
         $resp = $controller->store($request);
 
         $this->assertTrue($resp->isRedirect());
         $this->assertNotEmpty($resp->getSession()->get('success'));
     }
 
-    public function testEditReturnsInertiaEditComponentWithUserData(): void
+    public function test_edit_returns_inertia_edit_component_with_user_data(): void
     {
-        $user = new User();
+        $user = new User;
         $user->id = 10;
         $user->uuid = 'uuid-10';
         $user->first_name = 'Alice';
@@ -168,44 +214,45 @@ class UsersControllerTest extends TestCase
                 $this->assertSame('Doe', $u['last_name']);
                 $this->assertTrue($u['owner']);
                 $this->assertNull($u['photo']);
+
                 return true;
             })
             ->andReturn(Mockery::mock(InertiaResponse::class));
 
-        $controller = new UsersController();
+        $controller = new UsersController;
         $controller->edit($user);
     }
 
-    public function testUpdateUpdatesFieldsAndRedirectsWithSuccess(): void
+    public function test_update_updates_fields_and_redirects_with_success(): void
     {
         AppFacade::shouldReceive('environment')->with('demo')->andReturn(false);
 
         $request = Mockery::mock(UsersRequest::class);
         $request->shouldReceive('validated')->once()->andReturn([
             'first_name' => 'Bob',
-            'last_name'  => 'Smith',
-            'email'      => 'bob@example.com',
-            'owner'      => false,
-            'password'   => '',
+            'last_name' => 'Smith',
+            'email' => 'bob@example.com',
+            'owner' => false,
+            'password' => '',
         ]);
         $request->shouldReceive('file')->with('photo')->andReturn(null);
 
         $user = Mockery::mock(User::class);
         $user->shouldReceive('update')->once()->with([
             'first_name' => 'Bob',
-            'last_name'  => 'Smith',
-            'email'      => 'bob@example.com',
-            'owner'      => false,
+            'last_name' => 'Smith',
+            'email' => 'bob@example.com',
+            'owner' => false,
         ]);
 
-        $controller = new UsersController();
+        $controller = new UsersController;
         $resp = $controller->update($request, $user);
 
         $this->assertTrue($resp->isRedirect());
         $this->assertNotEmpty($resp->getSession()->get('success'));
     }
 
-    public function testUpdateInDemoModeReturnsErrorForDemoUser(): void
+    public function test_update_in_demo_mode_returns_error_for_demo_user(): void
     {
         AppFacade::shouldReceive('environment')->with('demo')->andReturn(true);
 
@@ -213,13 +260,13 @@ class UsersControllerTest extends TestCase
         $user = Mockery::mock(User::class);
         $user->shouldReceive('isDemoUser')->once()->andReturn(true);
 
-        $resp = (new UsersController())->update($request, $user);
+        $resp = (new UsersController)->update($request, $user);
 
         $this->assertTrue($resp->isRedirect());
         $this->assertNotEmpty($resp->getSession()->get('error'));
     }
 
-    public function testDestroyDeletesAndRedirectsBackWithSuccess(): void
+    public function test_destroy_deletes_and_redirects_back_with_success(): void
     {
         AppFacade::shouldReceive('environment')->with('demo')->andReturn(false);
 
@@ -227,31 +274,31 @@ class UsersControllerTest extends TestCase
         $user->shouldReceive('isDemoUser')->never();
         $user->shouldReceive('delete')->once();
 
-        $resp = (new UsersController())->destroy($user);
+        $resp = (new UsersController)->destroy($user);
 
         $this->assertTrue($resp->isRedirect());
         $this->assertNotEmpty($resp->getSession()->get('success'));
     }
 
-    public function testDestroyInDemoModeBlocksDemoUser(): void
+    public function test_destroy_in_demo_mode_blocks_demo_user(): void
     {
         AppFacade::shouldReceive('environment')->with('demo')->andReturn(true);
 
         $user = Mockery::mock(User::class);
         $user->shouldReceive('isDemoUser')->once()->andReturn(true);
 
-        $resp = (new UsersController())->destroy($user);
+        $resp = (new UsersController)->destroy($user);
 
         $this->assertTrue($resp->isRedirect());
         $this->assertNotEmpty($resp->getSession()->get('error'));
     }
 
-    public function testRestoreRestoresAndRedirects(): void
+    public function test_restore_restores_and_redirects(): void
     {
         $user = Mockery::mock(User::class);
         $user->shouldReceive('restore')->once();
 
-        $resp = (new UsersController())->restore($user);
+        $resp = (new UsersController)->restore($user);
 
         $this->assertTrue($resp->isRedirect());
         $this->assertNotEmpty($resp->getSession()->get('success'));

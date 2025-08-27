@@ -47,10 +47,10 @@ class UsersController extends Controller
 
         Auth::user()->account->users()->create([
             'first_name' => $data['first_name'],
-            'last_name'  => $data['last_name'],
-            'email'      => $data['email'],
-            'password'   => $data['password'] ?? null,
-            'owner'      => $data['owner'],
+            'last_name' => $data['last_name'],
+            'email' => $data['email'],
+            'password' => $data['password'] ?? null,
+            'owner' => $data['owner'],
             'photo_path' => $request->file('photo') ? $request->file('photo')->store('users') : null,
         ]);
 
@@ -75,7 +75,7 @@ class UsersController extends Controller
 
     public function update(UsersRequest $request, User $user): RedirectResponse
     {
-        if (AppFacade::environment("demo") && $user->isDemoUser()) {
+        if (AppFacade::environment('demo') && $user->isDemoUser()) {
             return Redirect::back()->with('error', User::MSG_DEMO_FORBIDDEN);
         }
 
@@ -83,16 +83,16 @@ class UsersController extends Controller
 
         $user->update([
             'first_name' => $data['first_name'],
-            'last_name'  => $data['last_name'],
-            'email'      => $data['email'],
-            'owner'      => $data['owner'],
+            'last_name' => $data['last_name'],
+            'email' => $data['email'],
+            'owner' => $data['owner'],
         ]);
 
         if ($request->file('photo')) {
             $user->update(['photo_path' => $request->file('photo')->store('users')]);
         }
 
-        if (!empty($data['password'])) {
+        if (! empty($data['password'])) {
             $user->update(['password' => $data['password']]);
         }
 
@@ -101,7 +101,7 @@ class UsersController extends Controller
 
     public function destroy(User $user): RedirectResponse
     {
-        if (AppFacade::environment("demo") && $user->isDemoUser()) {
+        if (AppFacade::environment('demo') && $user->isDemoUser()) {
             return Redirect::back()->with('error', User::MSG_DEMO_FORBIDDEN);
         }
 

@@ -18,7 +18,7 @@ class ApiDemoControllerTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testRestPostsReturnsOkWithCountAndData(): void
+    public function test_rest_posts_returns_ok_with_count_and_data(): void
     {
         $mockClient = Mockery::mock(JsonPlaceholderClient::class);
         $sample = [
@@ -33,7 +33,7 @@ class ApiDemoControllerTest extends TestCase
 
         $request = Request::create('/api/rest/posts', 'GET', ['limit' => 3]);
 
-        $controller = new ApiDemoController();
+        $controller = new ApiDemoController;
         $response = $controller->restPosts($request, $mockClient);
 
         $this->assertInstanceOf(JsonResponse::class, $response);
@@ -45,7 +45,7 @@ class ApiDemoControllerTest extends TestCase
         $this->assertSame($sample, $payload['data']);
     }
 
-    public function testRestPostsHandlesException(): void
+    public function test_rest_posts_handles_exception(): void
     {
         $mockClient = Mockery::mock(JsonPlaceholderClient::class);
         $mockClient->shouldReceive('getPosts')
@@ -55,7 +55,7 @@ class ApiDemoControllerTest extends TestCase
 
         $request = Request::create('/api/rest/posts', 'GET'); // brak limit -> domyślnie 5
 
-        $controller = new ApiDemoController();
+        $controller = new ApiDemoController;
         $response = $controller->restPosts($request, $mockClient);
 
         $this->assertInstanceOf(JsonResponse::class, $response);
@@ -67,7 +67,7 @@ class ApiDemoControllerTest extends TestCase
         $this->assertStringContainsString('boom', $payload['message']);
     }
 
-    public function testSoapCapitalReturnsOk(): void
+    public function test_soap_capital_returns_ok(): void
     {
         $mockClient = Mockery::mock(CountryInfoClient::class);
         $mockClient->shouldReceive('getCapitalCity')
@@ -75,7 +75,7 @@ class ApiDemoControllerTest extends TestCase
             ->with('pl')
             ->andReturn('Warsaw');
 
-        $controller = new ApiDemoController();
+        $controller = new ApiDemoController;
         $response = $controller->soapCapital('pl', $mockClient);
 
         $this->assertInstanceOf(JsonResponse::class, $response);
@@ -87,7 +87,7 @@ class ApiDemoControllerTest extends TestCase
         $this->assertSame('Warsaw', $payload['capital']);
     }
 
-    public function testSoapCapitalHandlesSoapFault(): void
+    public function test_soap_capital_handles_soap_fault(): void
     {
         $mockClient = Mockery::mock(CountryInfoClient::class);
         $mockClient->shouldReceive('getCapitalCity')
@@ -95,7 +95,7 @@ class ApiDemoControllerTest extends TestCase
             ->with('xx')
             ->andThrow(new SoapFault('Client', 'Invalid country code'));
 
-        $controller = new ApiDemoController();
+        $controller = new ApiDemoController;
         $response = $controller->soapCapital('xx', $mockClient);
 
         $this->assertInstanceOf(JsonResponse::class, $response);
@@ -107,7 +107,7 @@ class ApiDemoControllerTest extends TestCase
         $this->assertStringContainsString('Invalid country code', $payload['message']);
     }
 
-    public function testSoapCapitalHandlesUnexpectedError(): void
+    public function test_soap_capital_handles_unexpected_error(): void
     {
         $mockClient = Mockery::mock(CountryInfoClient::class);
         $mockClient->shouldReceive('getCapitalCity')
@@ -115,7 +115,7 @@ class ApiDemoControllerTest extends TestCase
             ->with('de')
             ->andThrow(new \Exception('unexpected'));
 
-        $controller = new ApiDemoController();
+        $controller = new ApiDemoController;
         $response = $controller->soapCapital('de', $mockClient);
 
         $this->assertInstanceOf(JsonResponse::class, $response);

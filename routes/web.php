@@ -32,7 +32,6 @@ Route::post('login', [AuthenticatedSessionController::class, 'store'])
 Route::delete('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
-
 Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])
         ->name('dashboard');

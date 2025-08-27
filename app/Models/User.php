@@ -17,14 +17,17 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    public const MSG_CREATED  = 'Zadanie utworzone.';
-    public const MSG_UPDATED  = 'Zadanie zaktualizowane.';
-    public const MSG_DELETED  = 'Zadanie usunięte.';
+    public const MSG_CREATED = 'Zadanie utworzone.';
+
+    public const MSG_UPDATED = 'Zadanie zaktualizowane.';
+
+    public const MSG_DELETED = 'Zadanie usunięte.';
+
     public const MSG_RESTORED = 'Zadanie przywrócone.';
+
     public const MSG_DEMO_FORBIDDEN = 'Użytkownik demo – operacja niedozwolona.';
+
     public const DEMO_EMAIL = 'monika@example.com';
-
-
 
     /**
      * The attributes that are mass assignable.
@@ -108,12 +111,11 @@ class User extends Authenticatable
     public function scopeWhereRole($query, $role): Builder
     {
         return match ($role) {
-            'user'  => $query->where('owner', false),
+            'user' => $query->where('owner', false),
             'owner' => $query->where('owner', true),
             default => $query,
         };
     }
-
 
     public function scopeFilter($query, array $filters)
     {

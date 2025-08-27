@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TasksRequest;
 use App\Models\Task;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Http\RedirectResponse;
 
 class TaskController extends Controller
 {
@@ -28,7 +28,7 @@ class TaskController extends Controller
         return Inertia::render('Tasks/Index', [
             'filters' => Request::all('search', 'status', 'trashed'),
             'tasks' => $this->baseQuery()
-                ->when(!(Auth::user()?->owner ?? false), fn ($q) => $q->where('user_id', Auth::id()))
+                ->when(! (Auth::user()?->owner ?? false), fn ($q) => $q->where('user_id', Auth::id()))
                 ->when(Request::get('status'), fn ($q, $status) => $q->where('status', $status))
                 ->when(Request::get('trashed') === 'with', fn ($q) => $q->withTrashed())
                 ->when(Request::get('trashed') === 'only', fn ($q) => $q->onlyTrashed())
