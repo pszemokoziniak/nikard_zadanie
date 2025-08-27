@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TasksRequest;
 use App\Models\Task;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
@@ -14,7 +13,7 @@ use Illuminate\Http\RedirectResponse;
 
 class TaskController extends Controller
 {
-    protected function baseQuery(): Builder
+    protected function baseQuery()
     {
         return Task::query();
     }

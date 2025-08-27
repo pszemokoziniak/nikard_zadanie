@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UsersRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\App as AppFacade;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
@@ -75,7 +75,7 @@ class UsersController extends Controller
 
     public function update(UsersRequest $request, User $user): RedirectResponse
     {
-        if (App::environment([User::ENV_DEMO]) && $user->isDemoUser()) {
+        if (AppFacade::environment("demo") && $user->isDemoUser()) {
             return Redirect::back()->with('error', User::MSG_DEMO_FORBIDDEN);
         }
 
@@ -101,7 +101,7 @@ class UsersController extends Controller
 
     public function destroy(User $user): RedirectResponse
     {
-        if (App::environment([User::ENV_DEMO]) && $user->isDemoUser()) {
+        if (AppFacade::environment("demo") && $user->isDemoUser()) {
             return Redirect::back()->with('error', User::MSG_DEMO_FORBIDDEN);
         }
 

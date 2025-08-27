@@ -22,7 +22,6 @@ class User extends Authenticatable
     public const MSG_DELETED  = 'Zadanie usunięte.';
     public const MSG_RESTORED = 'Zadanie przywrócone.';
     public const MSG_DEMO_FORBIDDEN = 'Użytkownik demo – operacja niedozwolona.';
-    public const ENV_DEMO = 'demo';
     public const DEMO_EMAIL = 'monika@example.com';
 
 
