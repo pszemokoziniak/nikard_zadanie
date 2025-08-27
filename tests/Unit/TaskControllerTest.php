@@ -16,6 +16,7 @@ use Inertia\Response as InertiaResponse;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Tests\TestCase;
+use Illuminate\Database\Eloquent\Builder;
 
 class TaskControllerTest extends TestCase
 {
@@ -31,9 +32,10 @@ class TaskControllerTest extends TestCase
         return new class($fakeQuery) extends TaskController {
             private $fakeQuery;
             public function __construct($fakeQuery) { $this->fakeQuery = $fakeQuery; }
-            protected function baseQuery() { return $this->fakeQuery; }
+            protected function baseQuery(): Builder { return $this->fakeQuery; }
         };
     }
+
 
     public function testIndexReturnsInertiaWithTransformedTasksAndFilters(): void
     {
