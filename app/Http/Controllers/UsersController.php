@@ -75,7 +75,7 @@ class UsersController extends Controller
 
     public function update(UsersRequest $request, User $user): RedirectResponse
     {
-        if (App::environment('demo') && $user->isDemoUser()) {
+        if (App::environment([User::ENV_DEMO]) && $user->isDemoUser()) {
             return Redirect::back()->with('error', User::MSG_DEMO_FORBIDDEN);
         }
 
@@ -99,10 +99,9 @@ class UsersController extends Controller
         return to_route('users.index')->with('success', User::MSG_UPDATED);
     }
 
-
     public function destroy(User $user): RedirectResponse
     {
-        if (App::environment('demo') && $user->isDemoUser()) {
+        if (App::environment([User::ENV_DEMO]) && $user->isDemoUser()) {
             return Redirect::back()->with('error', User::MSG_DEMO_FORBIDDEN);
         }
 
