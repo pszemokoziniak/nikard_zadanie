@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Http\JsonResponse;
 
 class TaskController extends Controller
 {
@@ -114,5 +115,37 @@ class TaskController extends Controller
         $task->restore();
 
         return to_route('tasks.index')->with('success', Task::MSG_RESTORED);
+    }
+
+    /**
+     * GET /api/tasks – zwraca JSON (paginowany)
+     *
+     * @throws AuthorizationException
+     */
+    public function apiIndex(\Illuminate\Http\Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', Task::class);
+
+        $query = $this->baseQuery()
+            ->when(! (Auth::user()?->owner ?? false), fn ($q) => $q->where('user_id', Auth::id()))
+            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->get('status')))
+            ->when($request->get('trashed') === 'with', fn ($q) => $q->withTrashed())
+            ->when($request->get('trashed') === 'only', fn ($q) => $q->onlyTrashed())
+            ->orderByDesc('created_at')
+            ->filter($request->only('search', 'status', 'trashed'));
+
+        $tasks = $query
+            ->paginate((int) $request->get('per_page', 10))
+            ->through(fn ($task) => [
+                'id' => $task->id,
+                'uuid' => $task->uuid,
+                'title' => $task->title,
+                'description' => $task->description,
+                'status' => $task->status,
+                'due_date' => optional($task->due_date)->toDateString(),
+                'deleted_at' => $task->deleted_at,
+            ]);
+
+        return response()->json($tasks);
     }
 }
