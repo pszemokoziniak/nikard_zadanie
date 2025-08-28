@@ -8,6 +8,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Requests\TasksRequest;
 use App\Models\Task;
 use Illuminate\Auth\Access\Response as AccessResponse;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -16,12 +17,11 @@ use Inertia\Response as InertiaResponse;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class TaskControllerTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
     use DatabaseTransactions;
+    use MockeryPHPUnitIntegration;
 
     protected function setCurrentRequest(Request $request): void
     {
