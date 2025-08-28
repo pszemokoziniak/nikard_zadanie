@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
         $plain = 'hwO9b15wmUR0XGjPVRYwnFp5vpflu2JJbej75AJjc17a249c';
         $hashed = hash('sha256', $plain);
 
-        $pat = new PersonalAccessToken();
+        $pat = new PersonalAccessToken;
         $pat->forceFill([
             'id' => 1,
             'tokenable_type' => User::class,

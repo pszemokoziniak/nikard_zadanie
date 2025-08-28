@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TasksRequest;
 use App\Models\Task;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Http\JsonResponse;
 
 class TaskController extends Controller
 {
