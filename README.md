@@ -78,7 +78,7 @@ Uruchom serwer deweloperski:
   php artisan serve
 ```
 
-- **Username:** johndoe@example.com
+- **Username:** monika@example.com
 - **Password:** secret
 
 ## Testy jednostkowe
